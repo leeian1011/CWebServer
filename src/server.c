@@ -4,6 +4,10 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 
+#include "hashtable.h"
+
+HttpRequest parse_http_request(char *BrowserResponse);
+
 int initializeServer(void){
     int ServerSocket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -20,9 +24,13 @@ int initializeServer(void){
 }
 
 int main(void){
-    char buffer[5000];
+    char *buffer = malloc(5000);
     int Socket = initializeServer();
 
     recv(Socket, buffer, 5000, 0);
+    
+    HttpRequest test = parse_http_request(buffer);
 
+    free(buffer);
+    return 0;
 }
