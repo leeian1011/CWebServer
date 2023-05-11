@@ -29,7 +29,7 @@ int main(void){
 
     recv(Socket, buffer, 5000, 0);
     
-    HttpRequest test = parse_http_request(buffer);
+    HttpRequest request = parse_http_request(buffer);
 
     free(buffer);
     return 0;
