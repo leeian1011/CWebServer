@@ -24,8 +24,8 @@ HttpRequest parse_http_request(char *BrowserResponse){
      * request method and request url */
       
     HttpRequest request;
-    request.requesturl = strtok(tmp, " ");
-    request.httpmethod = strtok(NULL, " ");
+    request.httpmethod = strtok(tmp, " ");
+    request.requesturl = strtok(NULL, " ");
 
     return request;
 }
