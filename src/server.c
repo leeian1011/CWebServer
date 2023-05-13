@@ -13,9 +13,13 @@ const int HTTP_REQUEST_BYTE_SIZE = 8192;
 // Accept up to double the minimum size of a standard http method line.
 const int HTTP_METHODLINE_BYTE_SIZE = 32;
 
+//add a global variable to allow sourcing of different html files.
 const char *INDEX = "page/index.html";
 const char *ABOUT = "page/about.html";
 const char *NOT_FOUND = "page/404.html";
+
+// Accept up to double the minimum size (15) of path.
+const int PATH_BYTE_SIZE = 30;
 
 const char *requested_html(char *requestedUrl){
     if(strcasecmp(requestedUrl, "/") == 0){
@@ -41,8 +45,10 @@ int main(void){
     parse_http_request(requestBuffer, httpMethodLine);
     set_httprequest_fields(httpMethodLine, request);
     
-    strcpy(path, requested_html(httpMethodLine));    
+    path = malloc(PATH_BYTE_SIZE);
+    strcpy(path, requested_html(request->requesturl));    
     printf("%s\n", path);
+
     htmlResponseLength = file_length(path);
     if(htmlResponseLength == -1){
         printf("Could not get length of html file requested");
@@ -50,8 +56,7 @@ int main(void){
     }
     
     htmlResponse = malloc(htmlResponseLength);
-    pull_html_response(path, htmlResponse);
-
+    pull_html_response(path, htmlResponse, htmlResponseLength);
     printf("%s\n", htmlResponse);
     
     return 0;

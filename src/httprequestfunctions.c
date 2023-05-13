@@ -25,6 +25,6 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 HttpRequest *set_httprequest_fields(char *httpMethodLine, HttpRequest *request){
     request->httpmethod = strtok(httpMethodLine, " ");
     request->requesturl = strtok(NULL, " ");
-
+    
     return request;
 }
