@@ -17,11 +17,8 @@ int initialize_server(void){
     serverAddress.sin_addr.s_addr = INADDR_ANY;
 
     bind(serverSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
-    listen(serverSocket, 1);
 
-    int webSocket = accept(serverSocket, NULL, NULL);
-
-    return webSocket;
+    return serverSocket;
 }
 
 

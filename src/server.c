@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "httprequestfunctions.h"
 #include "serverfunctions.h"
@@ -32,32 +33,43 @@ const char *requested_html(char *requestedUrl){
 }
 
 int main(void){
-    HttpRequest *request = malloc(sizeof(HttpRequest));
-    char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE);
+    int serverSocket = initialize_server();
+
+    while(1){
+    listen(serverSocket, 10);
+    int socket = accept(serverSocket, NULL, NULL);
+    HttpRequest *request = malloc(sizeof(HttpRequest)); 
+    char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE); 
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
-    char *path = NULL;
-    char *htmlResponse = NULL;
-    int htmlResponseLength;
+    char *path = NULL; 
+    char *htmlResponse = NULL; 
+    int htmlResponseLength = 0;
 
-    int socket = initialize_server();
 
-    recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
-    parse_http_request(requestBuffer, httpMethodLine);
+    recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0); 
+    parse_http_request(requestBuffer, httpMethodLine); 
     set_httprequest_fields(httpMethodLine, request);
-    
+
     path = malloc(PATH_BYTE_SIZE);
     strcpy(path, requested_html(request->requesturl));    
-    printf("%s\n", path);
 
-    htmlResponseLength = file_length(path);
+    htmlResponseLength = file_length(path); 
     if(htmlResponseLength == -1){
         printf("Could not get length of html file requested");
-        return -1;
     }
-    
+
     htmlResponse = malloc(htmlResponseLength);
     pull_html_response(path, htmlResponse, htmlResponseLength);
     printf("%s\n", htmlResponse);
-    
+    send(socket, htmlResponse, htmlResponseLength, 0);
+
+    free(request);
+    free(requestBuffer);
+    free(httpMethodLine);
+    free(htmlResponse);
+    free(path);
+
+    close(socket);
+    }
     return 0;
 }
