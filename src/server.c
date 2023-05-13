@@ -29,6 +29,9 @@ int main(void){
     char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE);
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
     char *path = NULL;
+    char *htmlResponse = NULL;
+    int htmlResponseLength;
+
     int socket = initialize_server();
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
@@ -37,12 +40,14 @@ int main(void){
     
     path = requested_html(request->requesturl);
     
-    int htmlResponseLength = file_length(path);
+    htmlResponseLength = file_length(path);
     if(htmlResponseLength == -1){
         printf("Could not get length of html file requested");
         return -1;
     }
     
+    htmlResponse = malloc(htmlResponseLength);
+
 
     return 0;
 }

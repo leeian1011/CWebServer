@@ -44,10 +44,10 @@ int file_length(char *path){
 }
 
 
-char * pull_html_response(char *url, const char *requestedHtml, char *htmlResponse){
+char * pull_html_response(const char *path, char *htmlResponse){
     int filelength = 0;
     char c;
-    FILE *html = fopen(requestedHtml, "r");
+    FILE *html = fopen(path, "r");
     if(html == NULL){
         return NULL;
     }
