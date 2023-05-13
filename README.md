@@ -10,8 +10,7 @@ literally just points to a memory address but i swear to god that concept is so 
 3. How frameworks do all the url routing for you
 literally step by step parsing all the good stuff out of the http request and building the http response which
 in all honestly i probably did wrong.
-4. Just how much power the string.h library has and the fact that strings are so wacky because the bytes are allocated in the "read-only" heap section so it makes it 
-in theory immutable.
+4. Just how much I had to remember to use the string.h library when working with string pointers because it's basically an array that is being pointed at.
 
 ## Why ?
 Why not get down and gritty with C to make a web server instead of just typing flask and not even knowing what happens underneath the hood, albeit theres probably more
