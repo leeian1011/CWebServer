@@ -17,7 +17,6 @@ int initialize_server(void){
     serverAddress.sin_addr.s_addr = INADDR_ANY;
 
     bind(serverSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
-    
     listen(serverSocket, 1);
 
     int webSocket = accept(serverSocket, NULL, NULL);
@@ -25,22 +24,10 @@ int initialize_server(void){
     return webSocket;
 }
 
-int file_length(char *url){
+
+int file_length(char *path){
     int fileLength = 0;
-    char *path = NULL;
     char c;
-
-    printf("--%s-- \n", url);
-
-    if(strcasecmp(url, "/") == 0){
-        path = INDEX; 
-    }else if(strcasecmp(url, "/about") == 0){
-        path = ABOUT;
-    }else{
-        path = NOTFOUND;
-    }
-    
-    printf("Attempting to open path to %s\n", path);
 
     FILE *pathFile = fopen(path, "r");
     if(pathFile == NULL){
@@ -50,11 +37,10 @@ int file_length(char *url){
     while((c = fgetc(pathFile)) != EOF){
         fileLength++;
     }
-    printf("%s", path); 
-    rewind(pathFile);
+    
     fclose(pathFile);
 
-    return fileLength;
+    return fileLength + 1;
 }
 
 
@@ -66,8 +52,6 @@ char * pull_html_response(char *url, const char *requestedHtml, char *htmlRespon
         return NULL;
     }
     
-    fread(htmlResponse, filelength + 1, 1, html);
-
     fclose(html);
     
     return htmlResponse;

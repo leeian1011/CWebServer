@@ -28,26 +28,21 @@ int main(void){
     HttpRequest *request = malloc(sizeof(HttpRequest));
     char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE);
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
+    char *path = NULL;
     int socket = initialize_server();
+
+    recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
+    parse_http_request(requestBuffer, httpMethodLine);
+    set_httprequest_fields(httpMethodLine, request);
     
-    while(1){
-        recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
-        printf("%s\n", requestBuffer);
-        parse_http_request(requestBuffer, httpMethodLine);
-        printf("%s\n", httpMethodLine);
-    } 
+    path = requested_html(request->requesturl);
     
-/* int htmlResponseLength = file_length(request->requesturl + 1);
+    int htmlResponseLength = file_length(path);
     if(htmlResponseLength == -1){
         printf("Could not get length of html file requested");
         return -1;
     }
-    printf("%d\n", htmlResponseLength);
-    char *htmlResponse = malloc(htmlResponseLength);
+    
 
-    htmlResponse = pull_html_response(request->requesturl, htmlResponse); 
-    printf("%s", htmlResponse);
-
-    send(Socket, htmlResponse, htmlResponseLength, 0);*/
     return 0;
 }

@@ -11,7 +11,7 @@
 
 
 int initialize_server(void);
-int file_length(char *url);
+int file_length(char *path);
 char *pull_html_response(char *url, const char* requestedHtml, char*htmlResponse); 
 char *render_response(char *httpRequestUrl);
 #endif
