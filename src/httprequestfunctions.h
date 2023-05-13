@@ -9,6 +9,6 @@ typedef struct HttpRequest{
 }
 HttpRequest;
 
-HttpRequest parse_http_request(char *BrowserResponse); 
+char *parse_http_request(char *BrowserResponse, char *parseHolder); 
 
 #endif

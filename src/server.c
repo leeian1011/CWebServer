@@ -5,81 +5,49 @@
 #include <netinet/in.h>
 #include <string.h>
 
-#include "hashtable.h"
+#include "httprequestfunctions.h"
+#include "serverfunctions.h"
 
-HttpRequest parse_http_request(char *BrowserResponse);
+// Accept only up to 8kb of data from a browser http request.
+const int HTTP_REQUEST_BYTE_SIZE = 8192;
+// Accept up to double the minimum size of a standard http method line.
+const int HTTP_METHODLINE_BYTE_SIZE = 32;
 
-int initializeServer(void){
-    int ServerSocket = socket(AF_INET, SOCK_STREAM, 0);
 
-    struct sockaddr_in ServerAddress;
-    ServerAddress.sin_port = htons(80);
-    ServerAddress.sin_family = AF_INET;
-    ServerAddress.sin_addr.s_addr = INADDR_ANY;
-
-    bind(ServerSocket, (struct sockaddr*) &ServerAddress, sizeof(ServerAddress));
-    listen(ServerSocket, 1);
-
-    int ClientSocket = accept(ServerSocket, NULL, NULL);
-    return ClientSocket;
-}
-
-char *grab_route_file(char *requesturl){
-    char* buffer = NULL;
-    if(strcmp(requesturl, "/") == 0){
-        FILE *index = fopen("page/index.html", "r");
-        if(index == NULL){
-            return "woops";
-        }
-        char c;
-        int filelength = 0;
-        while((c = fgetc(index)) != EOF){
-            filelength++;
-        }
-
-        rewind(index);
-        
-        buffer = malloc(filelength + 1);
-
-        fread(buffer, filelength, 1, index);
-
-        printf("%s", buffer);
-        
-        return buffer;
-    }if(strcmp(requesturl, "/about") == 0){
-        FILE *about = fopen("page/about.html", "r");
-        if(about == NULL){
-            return "woops";
-        }
-        char c;
-        int filelength = 0;
-        while((c = fgetc(about)) != EOF){
-            filelength++;
-        }
-
-        rewind(about);
-        
-        buffer = malloc(filelength + 1);
-
-        fread(buffer, filelength, 1, about);
-
-        printf("%s", buffer);
-        
-        return buffer;
+char *requested_html(char *url){
+    if(strcasecmp(url, "/") == 0){
+        return INDEX;
+    }else if(strcasecmp(url, "/about") == 0){
+        return ABOUT;
     }
-    return "<p> haha </p>";
+
+    return NOTFOUND;
 }
 
 int main(void){
-    char *buffer = malloc(5000);
-    int Socket = initializeServer();
+    HttpRequest *request = malloc(sizeof(HttpRequest));
+    char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE);
+    char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
+    int socket = initialize_server();
+    
+    while(1){
+        recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
+        printf("%s\n", requestBuffer);
+        parse_http_request(requestBuffer, httpMethodLine);
+        printf("%s\n", httpMethodLine);
+    } 
+    
+/* int htmlResponseLength = file_length(request->requesturl + 1);
+    if(htmlResponseLength == -1){
+        printf("Could not get length of html file requested");
+        return -1;
+    }
+    printf("%d\n", htmlResponseLength);
+    char *htmlResponse = malloc(htmlResponseLength);
 
-    recv(Socket, buffer, 5000, 0);
-    
-    HttpRequest request = parse_http_request(buffer);
-    char *tmp = grab_route_file(request.requesturl);   
-    
-    send(Socket, tmp, 5000, 0);
-    free(buffer);
+    htmlResponse = pull_html_response(request->requesturl, htmlResponse); 
+    printf("%s", htmlResponse);
+
+    send(Socket, htmlResponse, htmlResponseLength, 0);*/
     return 0;
 }
