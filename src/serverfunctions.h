@@ -5,5 +5,5 @@
 
 int initialize_server(void);
 int file_length(char *path);
-char *pull_html_response(const char* path, char *htmlResponse, int htmlResponseLength); 
+char *pull_html(const char* path, char *html, int htmlLength); 
 #endif

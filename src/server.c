@@ -40,9 +40,9 @@ int main(void){
     char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE); 
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
     char *path = NULL; 
-    char *htmlResponse = NULL; 
+    char *html = NULL; 
     char *httpResponse = NULL;
-    int htmlResponseLength = 0;
+    int htmlLength = 0;
 
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0); 
@@ -53,23 +53,23 @@ int main(void){
     path = malloc(PATH_BYTE_SIZE);
     strcpy(path, requested_html(request->requesturl));    
 
-    htmlResponseLength = file_length(path); 
-    if(htmlResponseLength == -1){
+    htmlLength = file_length(path); 
+    if(htmlLength == -1){
         printf("Could not get length of html file requested");
     }
 
-    htmlResponse = malloc(htmlResponseLength);
-    pull_html_response(path, htmlResponse, htmlResponseLength);
+    html = malloc(htmlLength);
+    pull_html(path, html, htmlLength);
+    printf("%s\n", html);
 
-    printf("%s\n", htmlResponse);
-    generate_http_response(httpResponse, htmlResponse);
-    send(socket, htmlResponse, htmlResponseLength, 0);
+    generate_http_response(httpResponse, path, html);
+    send(socket, html, htmlLength, 0);
     shutdown(socket, 2);
 
     free(request);
     free(requestBuffer);
     free(httpMethodLine);
-    free(htmlResponse);
+    free(html);
     free(path);
     }
     return 0;

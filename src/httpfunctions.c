@@ -23,8 +23,16 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 }
 
 
-char *generate_http_response(char *httpResponse, char *htmlResponse){
-    return "brooo";
+char *generate_http_response(char *httpResponse, char *path, char *html){
+    char *okResponse = "HTTP\\1.1 OK 200\r\nContent-Type: text/html\r\n";
+    char *errorResponse = "HTTP\\1.1 NOT FOUND 404\r\nContent-Type: text/html\r\n";
+    if(strcmp(path, "page/404.html") == 0){
+        strcat(errorResponse, html);
+        printf("%s\n", errorResponse);
+        httpResponse = errorResponse;
+        printf("%s\n", httpResponse);
+    }
+    return "huh";
 }
 
 

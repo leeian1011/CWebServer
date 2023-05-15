@@ -41,14 +41,14 @@ int file_length(char *path){
 }
 
 
-char * pull_html_response(const char *path, char *htmlResponse, int htmlResponseLength){
-    FILE *html = fopen(path, "r");
+char *pull_html(const char *path, char *html, int htmlLength){
+    FILE *htmlFile = fopen(path, "r");
     if(html == NULL){
         return NULL;
     }
-    fread(htmlResponse, htmlResponseLength, sizeof(char *), html);
-    fclose(html);
+    fread(html, htmlLength, sizeof(char *), htmlFile);
+    fclose(htmlFile);
     
-    return htmlResponse;
+    return html;
 }
 
