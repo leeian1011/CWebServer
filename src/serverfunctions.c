@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <string.h>
 
-#include "httprequestfunctions.h"
+#include "httpfunctions.h"
 #include "serverfunctions.h"
 
 int initialize_server(void){

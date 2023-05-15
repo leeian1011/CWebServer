@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "httprequestfunctions.h"
+#include "httpfunctions.h"
 
 /* Parses HTTP Request Method line into a string and returns it */
 char *parse_http_request(char *BrowserResponse, char *parseHolder){
@@ -21,6 +21,12 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
     }
     return parseHolder;
 }
+
+
+char *generate_http_response(char *httpResponse, char *htmlResponse){
+    return "brooo";
+}
+
 
 HttpRequest *set_httprequest_fields(char *httpMethodLine, HttpRequest *request){
     request->httpmethod = strtok(httpMethodLine, " ");

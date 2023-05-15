@@ -1,7 +1,7 @@
 #ifndef SERVERFUNCTIONS_H
 #define SERVERFUNCTIONS_H
 
-#include "httprequestfunctions.h"
+#include "httpfunctions.h"
 
 int initialize_server(void);
 int file_length(char *path);

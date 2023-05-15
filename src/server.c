@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "httprequestfunctions.h"
+#include "httpfunctions.h"
 #include "serverfunctions.h"
 
 // Accept only up to 8kb of data from a browser http request.
@@ -18,7 +18,6 @@ const int HTTP_METHODLINE_BYTE_SIZE = 32;
 const char *INDEX = "page/index.html";
 const char *ABOUT = "page/about.html";
 const char *NOT_FOUND = "page/404.html";
-
 // Accept up to double the minimum size (15) of path.
 const int PATH_BYTE_SIZE = 30;
 
@@ -27,8 +26,7 @@ const char *requested_html(char *requestedUrl){
         return INDEX;
     }else if(strcasecmp(requestedUrl, "/about") == 0){
         return ABOUT;
-    }
-
+    } 
     return NOT_FOUND;
 }
 
@@ -43,10 +41,12 @@ int main(void){
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
     char *path = NULL; 
     char *htmlResponse = NULL; 
+    char *httpResponse = NULL;
     int htmlResponseLength = 0;
 
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0); 
+    printf("%s\n\n", requestBuffer);
     parse_http_request(requestBuffer, httpMethodLine); 
     set_httprequest_fields(httpMethodLine, request);
 
@@ -60,16 +60,17 @@ int main(void){
 
     htmlResponse = malloc(htmlResponseLength);
     pull_html_response(path, htmlResponse, htmlResponseLength);
+
     printf("%s\n", htmlResponse);
+    generate_http_response(httpResponse, htmlResponse);
     send(socket, htmlResponse, htmlResponseLength, 0);
+    shutdown(socket, 2);
 
     free(request);
     free(requestBuffer);
     free(httpMethodLine);
     free(htmlResponse);
     free(path);
-
-    close(socket);
     }
     return 0;
 }
