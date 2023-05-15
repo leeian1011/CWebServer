@@ -23,16 +23,33 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 }
 
 
-char *generate_http_response(char *httpResponse, char *path, char *html){
-    char *okResponse = "HTTP\\1.1 OK 200\r\nContent-Type: text/html\r\n";
-    char *errorResponse = "HTTP\\1.1 NOT FOUND 404\r\nContent-Type: text/html\r\n";
+char *generate_http_response(char **httpResponse, char *path, char *html){
+    char *okResponse = "HTTP\\1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+    char *errorResponse = "HTTP\\1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n";
+    char *temporaryHttpResponse = NULL;
+    size_t okLength = strlen(okResponse);
+    size_t errorLength = strlen(errorResponse);
+    size_t htmlLength = strlen(html);
+    
     if(strcmp(path, "page/404.html") == 0){
-        strcat(errorResponse, html);
-        printf("%s\n", errorResponse);
-        httpResponse = errorResponse;
-        printf("%s\n", httpResponse);
+        temporaryHttpResponse = malloc(errorLength +  htmlLength + 1);
+        strcpy(temporaryHttpResponse, errorResponse);
+        strcat(temporaryHttpResponse, html);
+        *httpResponse = malloc(strlen(temporaryHttpResponse));
+        strcpy(*httpResponse, temporaryHttpResponse);
+        free(temporaryHttpResponse);
+        printf("httpResponse == %s\n", *httpResponse);
+        return *httpResponse;
     }
-    return "huh";
+
+    temporaryHttpResponse = malloc(okLength + htmlLength + 1);
+    strcpy(temporaryHttpResponse, okResponse);
+    strcat(temporaryHttpResponse, html);
+    *httpResponse = malloc(strlen(temporaryHttpResponse));
+    strcpy(*httpResponse, temporaryHttpResponse);
+    free(temporaryHttpResponse);
+
+    return *httpResponse;
 }
 
 

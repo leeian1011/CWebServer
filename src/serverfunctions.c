@@ -22,7 +22,7 @@ int initialize_server(void){
 }
 
 
-int file_length(char *path){
+size_t file_length(char *path){
     int fileLength = 0;
     char c;
 
@@ -41,7 +41,7 @@ int file_length(char *path){
 }
 
 
-char *pull_html(const char *path, char *html, int htmlLength){
+char *pull_html(const char *path, char *html, size_t htmlLength){
     FILE *htmlFile = fopen(path, "r");
     if(html == NULL){
         return NULL;

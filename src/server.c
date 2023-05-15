@@ -42,7 +42,7 @@ int main(void){
     char *path = NULL; 
     char *html = NULL; 
     char *httpResponse = NULL;
-    int htmlLength = 0;
+    size_t htmlLength = 0;
 
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0); 
@@ -62,8 +62,8 @@ int main(void){
     pull_html(path, html, htmlLength);
     printf("%s\n", html);
 
-    generate_http_response(httpResponse, path, html);
-    send(socket, html, htmlLength, 0);
+    generate_http_response(&httpResponse, path, html);
+    send(socket, httpResponse, strlen(httpResponse), 0);
     shutdown(socket, 2);
 
     free(request);

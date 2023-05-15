@@ -4,6 +4,6 @@
 #include "httpfunctions.h"
 
 int initialize_server(void);
-int file_length(char *path);
-char *pull_html(const char* path, char *html, int htmlLength); 
+size_t file_length(char *path);
+char *pull_html(const char* path, char *html, size_t htmlLength); 
 #endif
