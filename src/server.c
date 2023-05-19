@@ -19,7 +19,7 @@ const char *INDEX = "page/index.html";
 const char *ABOUT = "page/about.html";
 const char *NOT_FOUND = "page/404.html";
 // Accept up to double the minimum size (15) of path.
-const int PATH_BYTE_SIZE = 30;
+const int PATH_BYTE_SIZE = 45;
 
 const char *requested_html(char *requestedUrl){
     if(strcasecmp(requestedUrl, "/") == 0){
