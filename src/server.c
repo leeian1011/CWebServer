@@ -5,6 +5,9 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <unistd.h>
+#include <regex.h>
+#include <stdbool.h>
+
 
 #include "httpfunctions.h"
 #include "serverfunctions.h"
@@ -19,7 +22,7 @@ const char *INDEX = "page/index.html";
 const char *ABOUT = "page/about.html";
 const char *NOT_FOUND = "page/404.html";
 // Accept up to double the minimum size (15) of path.
-const int PATH_BYTE_SIZE = 30;
+const int PATH_BYTE_SIZE = 45;
 
 const char *requested_html(char *requestedUrl){
     if(strcasecmp(requestedUrl, "/") == 0){
@@ -30,9 +33,24 @@ const char *requested_html(char *requestedUrl){
     return NOT_FOUND;
 }
 
+bool is_icon_request(char *requestedUrl){
+   regex_t re;
+   char *pattern = "([/favicon_ico])";
+    printf("passed url -> %s\n", requestedUrl);
+   int regex = regcomp(&re, pattern, REG_EXTENDED);
+
+   regex = regexec(&re, requestedUrl, (size_t) 0, NULL, 0);
+   if(regex == 0){
+    return true;
+   }
+
+   return false;
+}
+
+
 int main(void){
     int serverSocket = initialize_server();
-
+    
     while(1){
     listen(serverSocket, 10);
     int socket = accept(serverSocket, NULL, NULL);
@@ -52,6 +70,11 @@ int main(void){
 
     path = malloc(PATH_BYTE_SIZE);
     strcpy(path, requested_html(request->requesturl));    
+    printf("httprequest child -> %s\n", request->requesturl);
+    printf("path -> %s\n", path);
+    if(is_icon_request(request->requesturl)){
+        printf("works\n");
+    }
 
     htmlLength = file_length(path); 
     if(htmlLength == -1){
@@ -65,12 +88,13 @@ int main(void){
     generate_http_response(&httpResponse, path, html);
     send(socket, httpResponse, strlen(httpResponse), 0);
     shutdown(socket, 2);
-
+    printf("MEMORY ADDRESSED\n%p\n%p\n%p\n%p\n%p\n%p\n", request, requestBuffer, httpMethodLine, html, path, httpResponse);
     free(request);
     free(requestBuffer);
     free(httpMethodLine);
     free(html);
     free(path);
+    free(httpResponse);
     }
     return 0;
 }
