@@ -28,3 +28,5 @@ pass in address of, into any functions that require to alter `HttpRequest`.
 - used the giga virgin method of debugging by printf-ing the memory addresses of every pointer malloc'd.<br>
 found out that there was a problem with the `PATH_BYTE_SIZE` global variable. It represents the number of bytes that my "path/to/file.file" would have, in this case I believe that the minimum 
 path byte size is 15 Bytes, "page/index.html". I set it to be able to receive atleast double that length so it was assigned to 30. The corruption was always 20 memory places or 20 bytes away from the first byte that `path` points to, I could not for the life of me figure out why this was an issue despite being able to read up to double the byte size. I ended up increasing it to 45, or triplethe minimum byte size, the corruption issue went away. 
+
+- A possible explanation could be that I had an off by one error as I did not take into account the terminating character byte, thus making it a minimum of 16 bytes.
