@@ -4,6 +4,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <string.h>
+#include <stdbool.h>
+#include <regex.h>
 
 #include "httpfunctions.h"
 #include "serverfunctions.h"
@@ -41,7 +43,28 @@ size_t file_length(char *path){
 }
 
 
-char *pull_html(const char *path, char *html, size_t htmlLength){
+bool is_icon_request(char *requestedUrl){
+   regex_t re;
+   char *pattern = "(/favicon_io)";
+   
+   int regex = regcomp(&re, pattern, REG_EXTENDED);
+   if(regex){
+       printf("error compiling regex\n");
+    }
+   
+   regex = regexec(&re, requestedUrl, 0, NULL, 0);
+   if(regex == REG_NOMATCH){
+       return false;
+   }else{
+       printf("pattern works\n");
+       return true;
+   }
+
+    return false;
+}
+
+
+char *pull_file(const char *path, char *html, size_t htmlLength){
     FILE *htmlFile = fopen(path, "r");
     if(html == NULL){
         return NULL;

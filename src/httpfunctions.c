@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "httpfunctions.h"
+#include "serverfunctions.h"
 
 /* Parses HTTP Request Method line into a string and returns it */
 char *parse_http_request(char *BrowserResponse, char *parseHolder){
@@ -26,6 +27,7 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 char *generate_http_response(char **httpResponse, char *path, char *html){
     char *okResponse = "HTTP\\1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
     char *errorResponse = "HTTP\\1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n";
+    char *iconResponse = "HTTP\\1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n";
     char *temporaryHttpResponse = NULL;
     size_t okLength = strlen(okResponse);
     size_t errorLength = strlen(errorResponse);
@@ -40,6 +42,8 @@ char *generate_http_response(char **httpResponse, char *path, char *html){
         free(temporaryHttpResponse);
         printf("httpResponse == %s\n", *httpResponse);
         return *httpResponse;
+    }else if(is_icon_request(path)){
+        printf("geng\n");
     }
 
     temporaryHttpResponse = malloc(okLength + htmlLength + 1);

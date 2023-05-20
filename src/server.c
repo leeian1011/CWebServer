@@ -15,16 +15,16 @@
 // Accept only up to 8kb of data from a browser http request.
 const int HTTP_REQUEST_BYTE_SIZE = 8192;
 // Accept up to double the minimum size of a standard http method line.
-const int HTTP_METHODLINE_BYTE_SIZE = 32;
+const int HTTP_METHODLINE_BYTE_SIZE = 76;
 
-//add a global variable to allow sourcing of different html files.
-const char *INDEX = "page/index.html";
-const char *ABOUT = "page/about.html";
-const char *NOT_FOUND = "page/404.html";
+//add a global variable to allow sourcing of different file files.
+const char *INDEX = "page/index.file";
+const char *ABOUT = "page/about.file";
+const char *NOT_FOUND = "page/404.file";
 // Accept up to double the minimum size (15) of path.
 const int PATH_BYTE_SIZE = 45;
 
-const char *requested_html(char *requestedUrl){
+const char *requested_file(char *requestedUrl){
     if(strcasecmp(requestedUrl, "/") == 0){
         return INDEX;
     }else if(strcasecmp(requestedUrl, "/about") == 0){
@@ -32,25 +32,6 @@ const char *requested_html(char *requestedUrl){
     } 
 
     return NOT_FOUND;
-}
-
-bool is_icon_request(char *requestedUrl){
-   regex_t re;
-   char *pattern = "(/favicon_ico)";
-   
-   int regex = regcomp(&re, pattern, REG_EXTENDED);
-   if(regex){
-       printf("error compiling regex\n");
-    }
-   
-   regex = regexec(&re, requestedUrl, 0, NULL, 0);
-   if(regex == REG_NOMATCH){
-       return false;
-   }else{
-       return true;
-   }
-
-    return false;
 }
 
 
@@ -64,9 +45,9 @@ int main(void){
     char *requestBuffer = malloc(HTTP_REQUEST_BYTE_SIZE); 
     char *httpMethodLine = malloc(HTTP_METHODLINE_BYTE_SIZE);
     char *path = NULL; 
-    char *html = NULL; 
+    char *file = NULL; 
     char *httpResponse = NULL;
-    size_t htmlLength = 0;
+    size_t fileLength = 0;
 
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0); 
@@ -75,30 +56,29 @@ int main(void){
     set_httprequest_fields(httpMethodLine, request);
 
     path = malloc(PATH_BYTE_SIZE);
-    strcpy(path, requested_html(request->requesturl));    
-    printf("httprequest child -> %s\n", request->requesturl);
-    printf("path -> %s\n", path);
+
     if(!is_icon_request(request->requesturl)){
-        htmlLength = file_length(path); 
-        if(htmlLength == -1){
-            printf("Could not get length of html file requested");
-        }
-
-        html = malloc(htmlLength);
-        pull_html(path, html, htmlLength);
-        printf("%s\n", html);
-    }
-    else{
-        printf("hello\n");
+        strcpy(path, request->requesturl);
+    }else{
+        strcpy(path, requested_file(request->requesturl)); 
     }
 
-    generate_http_response(&httpResponse, path, html);
+    fileLength = file_length(path); 
+    if(fileLength == -1){
+        printf("Could not get length of file file requested");
+    }
+
+    file = malloc(fileLength);
+    pull_file(path, file, fileLength);
+    printf("%s\n", file);
+
+    generate_http_response(&httpResponse, path, file);
     send(socket, httpResponse, strlen(httpResponse), 0);
     shutdown(socket, 2);
     free(request);
     free(requestBuffer);
     free(httpMethodLine);
-    free(html);
+    free(file);
     free(path);
     free(httpResponse);
     }
