@@ -30,21 +30,27 @@ const char *requested_html(char *requestedUrl){
     }else if(strcasecmp(requestedUrl, "/about") == 0){
         return ABOUT;
     } 
+
     return NOT_FOUND;
 }
 
 bool is_icon_request(char *requestedUrl){
    regex_t re;
-   char *pattern = "([/favicon_ico])";
-    printf("passed url -> %s\n", requestedUrl);
+   char *pattern = "(/favicon_ico)";
+   
    int regex = regcomp(&re, pattern, REG_EXTENDED);
-
-   regex = regexec(&re, requestedUrl, (size_t) 0, NULL, 0);
-   if(regex == 0){
-    return true;
+   if(regex){
+       printf("error compiling regex\n");
+    }
+   
+   regex = regexec(&re, requestedUrl, 0, NULL, 0);
+   if(regex == REG_NOMATCH){
+       return false;
+   }else{
+       return true;
    }
 
-   return false;
+    return false;
 }
 
 
@@ -72,23 +78,23 @@ int main(void){
     strcpy(path, requested_html(request->requesturl));    
     printf("httprequest child -> %s\n", request->requesturl);
     printf("path -> %s\n", path);
-    if(is_icon_request(request->requesturl)){
-        printf("works\n");
-    }
+    if(!is_icon_request(request->requesturl)){
+        htmlLength = file_length(path); 
+        if(htmlLength == -1){
+            printf("Could not get length of html file requested");
+        }
 
-    htmlLength = file_length(path); 
-    if(htmlLength == -1){
-        printf("Could not get length of html file requested");
+        html = malloc(htmlLength);
+        pull_html(path, html, htmlLength);
+        printf("%s\n", html);
     }
-
-    html = malloc(htmlLength);
-    pull_html(path, html, htmlLength);
-    printf("%s\n", html);
+    else{
+        printf("hello\n");
+    }
 
     generate_http_response(&httpResponse, path, html);
     send(socket, httpResponse, strlen(httpResponse), 0);
     shutdown(socket, 2);
-    printf("MEMORY ADDRESSED\n%p\n%p\n%p\n%p\n%p\n%p\n", request, requestBuffer, httpMethodLine, html, path, httpResponse);
     free(request);
     free(requestBuffer);
     free(httpMethodLine);
