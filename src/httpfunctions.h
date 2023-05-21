@@ -10,6 +10,6 @@ typedef struct HttpRequest{
 HttpRequest;
 
 char *parse_http_request(char *BrowserResponse, char *parseHolder); 
-char *generate_http_response(char **httpResponse, char *path, char *htmlResponse);
+unsigned char *generate_http_response(unsigned char **httpResponse, char *path, unsigned char *file);
 HttpRequest *set_httprequest_fields(char *httpMethodLine, HttpRequest *request);
 #endif

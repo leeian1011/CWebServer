@@ -26,7 +26,6 @@ int initialize_server(void){
 
 size_t file_length(char *path){
     int fileLength = 0;
-    char c;
     FILE *pathFile = fopen(path, "rb");
     if(pathFile == NULL){
         return - 1;
@@ -36,31 +35,12 @@ size_t file_length(char *path){
     rewind(pathFile);
     fclose(pathFile);
 
-    return fileLength + 1;
+    return fileLength;
 }
 
 
-bool is_icon_request(char *requestedUrl){
-   regex_t re;
-   char *pattern = "(favicon)";
-   
-   int regex = regcomp(&re, pattern, REG_EXTENDED);
-   if(regex){
-       printf("error compiling regex\n");
-    }
-   
-   regex = regexec(&re, requestedUrl, 0, NULL, 0);
-   if(regex == REG_NOMATCH){
-       return false;
-   }else{
-       return true;
-   }
 
-    return false;
-}
-
-
-char *pull_file(char *path, char *file, size_t fileLength){
+unsigned char *pull_file(char *path, unsigned char *file, size_t fileLength){
     FILE *readFile = fopen(path, "rb");
     if(readFile == NULL){
         return NULL;

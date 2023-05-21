@@ -24,42 +24,12 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 }
 
 
-char *generate_http_response(char **httpResponse, char *path, char *html){
+unsigned char *generate_http_response(unsigned char **httpResponse, char *path, unsigned char *file){
     char *okResponse = "HTTP\\1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
     char *errorResponse = "HTTP\\1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n";
-    char *iconResponse = "HTTP\\1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n";
     char *temporaryHttpResponse = NULL;
     size_t okLength = strlen(okResponse);
     size_t errorLength = strlen(errorResponse);
-    size_t htmlLength = 1000000;
-    size_t iconLength = strlen(iconResponse); 
-    if(strcmp(path, "page/404.html") == 0){
-        temporaryHttpResponse = malloc(errorLength +  htmlLength + 1);
-        strcpy(temporaryHttpResponse, errorResponse);
-        strcat(temporaryHttpResponse, html);
-        *httpResponse = malloc(strlen(temporaryHttpResponse));
-        strcpy(*httpResponse, temporaryHttpResponse);
-        free(temporaryHttpResponse);
-        printf("httpResponse == %s\n", *httpResponse);
-        return *httpResponse;
-    }else if(is_icon_request(path)){
-        temporaryHttpResponse = malloc(iconLength + htmlLength + 1);
-        strcpy(temporaryHttpResponse, iconResponse);
-        strcat(temporaryHttpResponse, html);
-        *httpResponse = malloc(strlen(temporaryHttpResponse));
-        strcpy(*httpResponse, temporaryHttpResponse);
-        free(temporaryHttpResponse);
-        printf("httpResponse == %s\n", *httpResponse);
-        return *httpResponse;
-    }
-
-    temporaryHttpResponse = malloc(okLength + htmlLength + 1);
-    strcpy(temporaryHttpResponse, okResponse);
-    strcat(temporaryHttpResponse, html);
-    *httpResponse = malloc(strlen(temporaryHttpResponse));
-    strcpy(*httpResponse, temporaryHttpResponse);
-    free(temporaryHttpResponse);
-
     return *httpResponse;
 }
 
