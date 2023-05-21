@@ -26,23 +26,24 @@ int initialize_server(void){
 bool is_icon_request(char *path){
     regex_t re;
     int regex;
+    bool check;
 
-    regex = regcomp(&re, "(favicon)", 0);
+    regex = regcomp(&re, "favicon", 0);
     
     if(regex != 0){
         printf("Regex compilation failed\n\n");
-        return false;
+        check = 0;
     }
 
-    printf("Currently Matching request for icon request");
-    regex = regexec(&re, path, 0, NULL, REG_EXTENDED);
+    regex = regexec(&re, path, 0, NULL, 0);
     if(regex == REG_NOMATCH){
-        return false;
+        check = 0;
     }else if(regex == 0){
-        return true;
+        check = 1;
     }
 
-    return true;
+    regfree(&re);
+    return check;
 }
     
 size_t file_length(char *path){

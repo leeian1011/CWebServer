@@ -30,21 +30,25 @@ unsigned char *generate_http_response(unsigned char **httpResponse, char *path, 
     char *iconResponse = "HTTP\\1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n";
     char *responseCode = NULL;
     size_t tmpfileLength = *fileLength;
-    size_t responseCodeLength;
-
+    size_t responseCodeLength = 0;
+   printf("variables initialized properly"); 
     if(is_icon_request(path)){
+        printf("icon success path = %s\n", path);
         responseCodeLength = strlen(iconResponse);
         responseCode = iconResponse;
     }else if(strcasecmp(path, "page/404.html") == 0){
         responseCodeLength = strlen(errorResponse);
         responseCode = errorResponse;
     }else{
+        printf("icon fail path = %s\n", path);
         responseCodeLength = strlen(okResponse);
         responseCode = okResponse;
     }
-    
-    fileLength += responseCodeLength;
-    *httpResponse = malloc(*fileLength);
+   printf("passed icon testing\n\n"); 
+    *fileLength += responseCodeLength;
+    *httpResponse = malloc(*fileLength + 10);
+    printf("length == %lu\n\n", *fileLength);
+    printf("malloc httpResponse successful\n");
 
     memcpy(*httpResponse, responseCode, responseCodeLength);
     memcpy(*httpResponse + responseCodeLength, file, tmpfileLength);
