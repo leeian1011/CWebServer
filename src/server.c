@@ -53,17 +53,18 @@ int main(void){
 
 
     recv(socket, requestBuffer, HTTP_REQUEST_BYTE_SIZE, 0);
-    printf("Browser Request\n_____________\n%s", requestBuffer);
+    printf("Browser Request\n-------------\n%s\n", requestBuffer);
 
     parse_http_request(requestBuffer, httpMethodLine);
-    printf("HTTP METOD LINE\n_____________\n%s", httpMethodLine);
+    printf("Http Method Line\n-------------\n%s\n", httpMethodLine);
 
     set_httprequest_fields(httpMethodLine, request);
-    printf("REQUEST FIELDS\n_____________\n->requesturl : %s\n->httpmethod : %s\n", request->requesturl, request->httpmethod);
+    printf("Request Fields\n-------------\n->requesturl : %s\n->httpmethod : %s\n\n", request->requesturl, request->httpmethod);
 
     path = malloc(strlen(request->requesturl));
     strcpy(path, requested_file(request->requesturl)); 
-    
+    printf("Path set to\n-------------\n%s\n\n", path);
+
     fileLength = file_length(path); 
     if(fileLength == -1){
         printf("Could not get length of file file requested");
@@ -71,10 +72,11 @@ int main(void){
     
     file = malloc(fileLength);
     pull_file(path, file, fileLength);
-    generate_http_response(&httpResponse, path, file);
+    printf("File read\n-----------\n%s\n", file);
 
+    generate_http_response(&httpResponse, path, file, &fileLength);
 
-    send(socket, "<p> test </p>", 10000, 0);
+    send(socket, httpResponse, fileLength, 0);
     shutdown(socket, 2);
 
     free(request);

@@ -24,12 +24,30 @@ char *parse_http_request(char *BrowserResponse, char *parseHolder){
 }
 
 
-unsigned char *generate_http_response(unsigned char **httpResponse, char *path, unsigned char *file){
+unsigned char *generate_http_response(unsigned char **httpResponse, char *path, unsigned char *file, size_t *fileLength){
     char *okResponse = "HTTP\\1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
     char *errorResponse = "HTTP\\1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n";
-    char *temporaryHttpResponse = NULL;
-    size_t okLength = strlen(okResponse);
-    size_t errorLength = strlen(errorResponse);
+    char *iconResponse = "HTTP\\1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n";
+    char *responseCode = NULL;
+    size_t tmpfileLength = *fileLength;
+    size_t responseCodeLength;
+
+    if(is_icon_request(path)){
+        responseCodeLength = strlen(iconResponse);
+        responseCode = iconResponse;
+    }else if(strcasecmp(path, "page/404.html") == 0){
+        responseCodeLength = strlen(errorResponse);
+        responseCode = errorResponse;
+    }else{
+        responseCodeLength = strlen(okResponse);
+        responseCode = okResponse;
+    }
+    
+    fileLength += responseCodeLength;
+    *httpResponse = malloc(*fileLength);
+
+    memcpy(*httpResponse, responseCode, responseCodeLength);
+    memcpy(*httpResponse + responseCodeLength, file, tmpfileLength);
     return *httpResponse;
 }
 

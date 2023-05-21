@@ -5,6 +5,7 @@
 #include "httpfunctions.h"
 
 int initialize_server(void);
+bool is_icon_request(char *path);
 size_t file_length(char *path);
 unsigned char *pull_file(char* path, unsigned char *file, size_t fileLength); 
 #endif

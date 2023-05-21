@@ -23,13 +23,35 @@ int initialize_server(void){
     return serverSocket;
 }
 
+bool is_icon_request(char *path){
+    regex_t re;
+    int regex;
 
+    regex = regcomp(&re, "(favicon)", 0);
+    
+    if(regex != 0){
+        printf("Regex compilation failed\n\n");
+        return false;
+    }
+
+    printf("Currently Matching request for icon request");
+    regex = regexec(&re, path, 0, NULL, REG_EXTENDED);
+    if(regex == REG_NOMATCH){
+        return false;
+    }else if(regex == 0){
+        return true;
+    }
+
+    return true;
+}
+    
 size_t file_length(char *path){
     int fileLength = 0;
     FILE *pathFile = fopen(path, "rb");
     if(pathFile == NULL){
         return - 1;
     }
+    
     fseek(pathFile, 0, SEEK_END);
     fileLength = ftell(pathFile);
     rewind(pathFile);
