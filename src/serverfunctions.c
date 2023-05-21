@@ -27,16 +27,13 @@ int initialize_server(void){
 size_t file_length(char *path){
     int fileLength = 0;
     char c;
-
-    FILE *pathFile = fopen(path, "r");
+    FILE *pathFile = fopen(path, "rb");
     if(pathFile == NULL){
         return - 1;
     }
-
-    while((c = fgetc(pathFile)) != EOF){
-        fileLength++;
-    }
-    
+    fseek(pathFile, 0, SEEK_END);
+    fileLength = ftell(pathFile);
+    rewind(pathFile);
     fclose(pathFile);
 
     return fileLength + 1;
@@ -45,7 +42,7 @@ size_t file_length(char *path){
 
 bool is_icon_request(char *requestedUrl){
    regex_t re;
-   char *pattern = "(/favicon_io)";
+   char *pattern = "(favicon)";
    
    int regex = regcomp(&re, pattern, REG_EXTENDED);
    if(regex){
@@ -56,7 +53,6 @@ bool is_icon_request(char *requestedUrl){
    if(regex == REG_NOMATCH){
        return false;
    }else{
-       printf("pattern works\n");
        return true;
    }
 
@@ -64,14 +60,15 @@ bool is_icon_request(char *requestedUrl){
 }
 
 
-char *pull_file(const char *path, char *html, size_t htmlLength){
-    FILE *htmlFile = fopen(path, "r");
-    if(html == NULL){
+char *pull_file(char *path, char *file, size_t fileLength){
+    FILE *readFile = fopen(path, "rb");
+    if(readFile == NULL){
         return NULL;
     }
-    fread(html, htmlLength, sizeof(char *), htmlFile);
-    fclose(htmlFile);
-    
-    return html;
+
+    fread(file, sizeof(char), fileLength, readFile);
+    fclose(readFile);
+
+    return file;
 }
 

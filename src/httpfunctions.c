@@ -31,8 +31,8 @@ char *generate_http_response(char **httpResponse, char *path, char *html){
     char *temporaryHttpResponse = NULL;
     size_t okLength = strlen(okResponse);
     size_t errorLength = strlen(errorResponse);
-    size_t htmlLength = strlen(html);
-    
+    size_t htmlLength = 1000000;
+    size_t iconLength = strlen(iconResponse); 
     if(strcmp(path, "page/404.html") == 0){
         temporaryHttpResponse = malloc(errorLength +  htmlLength + 1);
         strcpy(temporaryHttpResponse, errorResponse);
@@ -43,7 +43,14 @@ char *generate_http_response(char **httpResponse, char *path, char *html){
         printf("httpResponse == %s\n", *httpResponse);
         return *httpResponse;
     }else if(is_icon_request(path)){
-        printf("geng\n");
+        temporaryHttpResponse = malloc(iconLength + htmlLength + 1);
+        strcpy(temporaryHttpResponse, iconResponse);
+        strcat(temporaryHttpResponse, html);
+        *httpResponse = malloc(strlen(temporaryHttpResponse));
+        strcpy(*httpResponse, temporaryHttpResponse);
+        free(temporaryHttpResponse);
+        printf("httpResponse == %s\n", *httpResponse);
+        return *httpResponse;
     }
 
     temporaryHttpResponse = malloc(okLength + htmlLength + 1);
