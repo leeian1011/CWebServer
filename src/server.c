@@ -21,15 +21,15 @@ const int HTTP_METHODLINE_BYTE_SIZE = 76;
 const char *INDEX = "page/index.html";
 const char *ABOUT = "page/about.html";
 const char *NOT_FOUND = "page/404.html";
-const char *ICON = "favicon.ico";
+const char *ICON = "faviconV1.0.ico";
 // Accept up to double the minimum size (15) of path.
 
 const char *requested_file(char *requestedUrl){
     if(strcasecmp(requestedUrl, "/") == 0){
         return INDEX;
     }else if(strcasecmp(requestedUrl, "/about") == 0){
-        return ABOUT;
-    }else if(strcasecmp(requestedUrl, "/favicon.ico") == 0){
+        return "page/test.html";
+    }else if(strcasecmp(requestedUrl, "/faviconV1.0.ico") == 0){
         return ICON;
     }
 
@@ -39,7 +39,7 @@ const char *requested_file(char *requestedUrl){
 
 int main(void){
     int serverSocket = initialize_server();
-    
+    char test[20];
     while(1){
     listen(serverSocket, 10);
     int socket = accept(serverSocket, NULL, NULL);

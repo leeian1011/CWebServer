@@ -46,7 +46,7 @@ unsigned char *generate_http_response(unsigned char **httpResponse, char *path, 
     }
    printf("passed icon testing\n\n"); 
     *fileLength += responseCodeLength;
-    *httpResponse = malloc(*fileLength + 10);
+    *httpResponse = malloc(*fileLength);
     printf("length == %lu\n\n", *fileLength);
     printf("malloc httpResponse successful\n");
 
